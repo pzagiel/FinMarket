@@ -1,0 +1,96 @@
+//
+//  ContentView.swift
+//  HelloIphone
+//
+//  Created by patrick zagiel on 09/04/2022.
+//
+
+import SwiftUI
+
+struct stock: Identifiable {
+     let id = UUID()
+     var code: String
+     var name: String
+     var quote: Double
+     var evol: Double
+ }
+
+struct ContentView: View {
+    @State private var priceValue: Double = 0.0
+    @State private var priceEvol: Double = 0.0
+    @State var ticker=""
+    @State var count=0
+    @ObservedObject private var price = YahooPrice()
+    
+    var stocks = [
+        stock(code: "INGA.AS", name: "ING",quote:10.56,evol:0.025),
+        stock(code: "UBSG.SW", name: "UBS",quote:0,evol:0),
+        stock(code: "AIR.PA", name: "Airbus",quote:0,evol:0),
+        stock(code: "LOTB.BR", name: "Lotus Bakery",quote:0,evol:0)
+    ]
+    
+   
+    //@State var  price = YahooPrice()
+    func process(){
+        print("process")
+    }
+    
+    var body: some View {
+       
+        List {
+            ForEach(stocks) { test in
+                HStack{
+                    VStack{
+                        Text(test.name)
+                        Text(test.code)
+                    }
+                  
+                    Text("\(test.quote, specifier: "%.2f")")
+                    Text("\(test.evol, specifier: "%.2f%%")")
+                }
+                
+            }
+        }
+
+
+
+      /*  VStack {
+            Text("\(price.priceValue, specifier: "%.2f")")
+            Text("\(price.priceEvol, specifier: "%.2f%%")")
+            TextField("Enter Ticker", text: $ticker)
+            Button(action: {
+                price.getPrice(ticker:ticker)
+                //self.priceValue=price.priceValue
+                //self.priceEvol=price.priceEvol
+            }) {
+                Text("Get Price")
+                    .padding()
+                    .background(Color.orange)
+                    .foregroundColor(Color.black)
+                    .cornerRadius(15)
+                    
+            }
+            Button(action: {
+                priceValue=0
+                priceEvol=0
+            }) {
+                Text("Clear")
+                    .padding()
+                    .background(Color.purple)
+                    .foregroundColor(Color.black)
+                    .cornerRadius(15)
+                    
+            }
+           
+        } */
+        
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            ContentView()
+        }
+    }
+}
