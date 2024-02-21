@@ -1,5 +1,8 @@
 import Foundation
 
+
+// http://www.h2o-am.com/wp-content/themes/amarou/hs/get_json.php?isin=FR0011015478
+
 let jsonData = """
 [
     [1600992000000, 27994.39],
@@ -19,6 +22,35 @@ struct Price {
     let date: Date
     let value: Double
 }
+class H2OPrice: ObservableObject{
+
+public var prices: [Price] = []
+
+    
+func getNav() {
+    let url = URL(string: "https://www.h2o-am.com/wp-content/themes/amarou/hs/get_json.php?isin=FR0011015478")!
+    print("before")
+    let task = URLSession.shared.dataTask(with: url, completionHandler: getData)
+    print("after")
+
+    
+func getData(data: Data?, response: URLResponse?, error: Error?) {
+    guard let data = data else { return }
+   
+    do {
+        let decodedData = try JSONDecoder().decode(JSONPrices.self, from: data)
+        
+            prices=decodedData.map {
+            let date = Date(timeIntervalSince1970: $0[0] / 1000) // Convert Unix timestamp to Date
+            let value = $0[1]
+            return Price(date: date, value: value)
+        }
+    } catch let jsonError as NSError {
+        print("JSON decode failed: \(jsonError.localizedDescription)")
+    }
+}
+    task.resume()
+}
 
 func decodeJSONPrices() {
 do {
@@ -36,4 +68,5 @@ do {
 }
 }
 
+}
 
