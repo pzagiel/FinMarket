@@ -95,9 +95,10 @@ struct ContentView: View {
     // rajouter chat gpt
     //@State private var yahooPrices: [String: YahooPrice] = [:]
     
-    let symbols = ["UBSG.SW", "INGA.AS", "PHIA.AS", "PANW","MU","CAP.PA", "ALGN","AMZN","BABA","JD","MDB","MRNA","SBUX","LOTB.BR","AIR.PA","STMPA.PA","DIM.PA","TSM","TSLA","AAPL"]
+    let symbols = ["EURUSD=X","UBSG.SW", "INGA.AS", "PHIA.AS", "PANW","MU","CAP.PA", "ALGN","AMZN","BABA","JD","MDB","MRNA","SBUX","LOTB.BR","AIR.PA","STMPA.PA","DIM.PA","TSM","TSLA","AAPL"]
     let symbols1 = ["UBSG.SW", "INGA.AS","BABA","MDB"]
     var body: some View {
+    TabView {
         NavigationView {
            
        /* Button("Refresh") {
@@ -110,7 +111,7 @@ struct ContentView: View {
                 HStack {
                     Text(symbol)
                     Spacer()
-                    Text(String(format: "%.2f", yahooPrice.priceValue))
+                    Text(String(format: "%.3f", yahooPrice.priceValue))
                     Text(String(format: "%+.2f%%", yahooPrice.priceEvol)).foregroundColor(yahooPrice.priceEvol >= 0 ? Color.green : Color.red)
                     }
                } else {
@@ -162,7 +163,18 @@ struct ContentView: View {
             }
                 }
         }
+        .tabItem {
+                        Label("Stocks", systemImage: "chart.bar.fill")
+                    }
+
+                    // Second Tab (You can add more tabs similarly)
+                    Text("H2O Funds NAV soon")
+                        .tabItem {
+                            Label("H2O Funds", systemImage: "square.and.pencil")
+                        }
+        
         //.id(refreshId)
+    }
     }
        
  
