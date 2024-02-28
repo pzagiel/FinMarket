@@ -20,15 +20,19 @@ typealias JSONPrices = [[Double]]
 
 struct Price {
     let date: Date
-    let value: Double
+    var value: Double
+    var evol: Double
 }
 class H2OPrice: ObservableObject{
+    @Published public var lastprice: Price = Price(date: Date(), value: 0.0,evol:0.0)
+    @Published public var prices: [Price] = []
 
-public var prices: [Price] = []
-
+    func test() {
+        self.loadNav(isin: "1600992000000")
+    }
     
-func getNav() {
-    let url = URL(string: "https://www.h2o-am.com/wp-content/themes/amarou/hs/get_json.php?isin=FR0011015478")!
+func loadNav(isin:String) {
+    let url = URL(string: "https://www.h2o-am.com/wp-content/themes/amarou/hs/get_json.php?isin="+isin)!
     print("before")
     let task = URLSession.shared.dataTask(with: url, completionHandler: getData)
     print("after")
@@ -39,19 +43,40 @@ func getData(data: Data?, response: URLResponse?, error: Error?) {
    
     do {
         let decodedData = try JSONDecoder().decode(JSONPrices.self, from: data)
-        
+            
             prices=decodedData.map {
             let date = Date(timeIntervalSince1970: $0[0] / 1000) // Convert Unix timestamp to Date
             let value = $0[1]
-            return Price(date: date, value: value)
+                return Price(date: date, value: value, evol:0)
+        }
+        DispatchQueue.main.async {
+            self.initLastPrice()
         }
     } catch let jsonError as NSError {
         print("JSON decode failed: \(jsonError.localizedDescription)")
     }
 }
+    
     task.resume()
 }
 
+func initLastPrice(){
+    if (self.prices.count)>0 {
+        self.prices[prices.count-1].evol=(prices[prices.count-1].value-prices[prices.count-2].value)/prices[prices.count-2].value
+        self.lastprice=self.prices[prices.count-1];
+        print(self.lastprice)
+        }
+    }
+    
+func setLastPrice()->Price? {
+    if (prices.count)>0 {
+        print ("LastPrice")
+        return prices[prices.count-1]
+    }
+    else {
+        return nil
+    }
+}
 func decodeJSONPrices() {
 do {
     let decodedData = try JSONDecoder().decode(JSONPrices.self, from: jsonData)
@@ -59,10 +84,9 @@ do {
     let formattedData: [Price] = decodedData.map {
         let date = Date(timeIntervalSince1970: $0[0] / 1000) // Convert Unix timestamp to Date
         let value = $0[1]
-        return Price(date: date, value: value)
+        return Price(date: date, value: value,evol:0)
     }
     
-    print(formattedData)
 } catch {
     print("Erreur de décodage : \(error)")
 }
