@@ -59,44 +59,45 @@ struct H2OFundsView: View {
                return funds.map { $0[0] }
            }
         return
-        VStack(alignment: .center, spacing:0) {
-                   Text("H2O Funds")
-                    .font(.title)
-                    .bold()  // Appliquer le gras
-                    .foregroundColor(Color.blue)  // Appliquer la couleur bleu clair
-                    .padding(.bottom, 10)
-        List(funds, id: \.self[0]) { fund in
+    
+            List(funds, id: \.self[0]) { fund in
             if let h2OPrice = viewModel.h2OPrices[fund[0]] {
                 HStack {
-                        Text(fund[1]).bold()
-                Spacer()
+                    Text(fund[1]).bold().foregroundColor(Color(red: 0.5, green: 0.7, blue: 1.0))
+                        .frame(maxWidth: .infinity, alignment: .topLeading) // Aligner en haut à gauche
+                        //.border(Color.black, width: 2)
+                    
                 VStack (alignment: .trailing, spacing: 3) {
+                        Text(String(format: "%.3f",h2OPrice.lastprice.value)).multilineTextAlignment(.trailing)
                     
                         //Text(String(format: "%.3f", h2OPrice.getLastPrice().value))
-                        Text(dateFormatter.string(from:h2OPrice.lastprice.date))
-                       // Spacer()
-                    Text(String(format: "%.3f",h2OPrice.lastprice.value)).multilineTextAlignment(.trailing)
-                    Text(String(format: "%+.2f%%", h2OPrice.lastprice.evol*100)).foregroundColor(h2OPrice.lastprice.evol >= 0 ? Color.green : Color.red).multilineTextAlignment(.trailing)
                        
-
+                       // Spacer()
+                  
+                    Text(String(format: "%+.2f%%", h2OPrice.lastprice.evol*100)).foregroundColor(h2OPrice.lastprice.evol >= 0 ? Color.green : Color.red).multilineTextAlignment(.trailing)
+                    Text(dateFormatter.string(from:h2OPrice.lastprice.date))
+                        .font(.system(size: 12)) // Ajuster la taille de la police selon vos préférences
+                        .foregroundColor(Color.gray)
                         }
                 }
-
-                    }
+               
+                }
             }
-        }
+            .navigationTitle("H2O Funds")
+            
             .onAppear {
             print("H2O Funds")
             viewModel.getAllNAV(isins:fundsIsin)
             viewModel.subscribeAll()
-        }
+            }
             .onReceive(viewModel.$h2OPrices) { updatedPrices in
                print ("LAST NAV change")
                 let numberOfElements = viewModel.h2OPrices.count
                 print(numberOfElements)
             }
-    
     }
+    
+    
 }
 
 
