@@ -26,10 +26,8 @@ struct Price {
 class H2OPrice: ObservableObject{
     @Published public var lastprice: Price = Price(date: Date(), value: 0.0,evol:0.0)
     @Published public var prices: [Price] = []
+    @Published public var perfYtd=0.0
 
-    func test() {
-        self.loadNav(isin: "1600992000000")
-    }
     
 func loadNav(isin:String) {
     let url = URL(string: "https://www.h2o-am.com/wp-content/themes/amarou/hs/get_json.php?isin="+isin)!
@@ -37,6 +35,35 @@ func loadNav(isin:String) {
     let task = URLSession.shared.dataTask(with: url, completionHandler: getData)
     print("after")
 
+    // Ajoutez une fonction pour calculer la performance YTD
+       func calculateYTDPerformance() -> Double {
+           guard let lastPrice = prices.last else {
+               return 0.0 // Retourne 0 si la liste des prix est vide
+           }
+
+           let currentDate = Date()
+           let calendar = Calendar.current
+           let currentYear = calendar.component(.year, from: currentDate)
+
+           // Filtrer les prix pour l'année en cours
+           let pricesForCurrentYear = prices.filter {
+               let year = calendar.component(.year, from: $0.date)
+               return year == currentYear
+           }
+
+           // Si aucun prix n'est disponible pour l'année en cours, retourne 0
+           guard let firstPriceOfYear = pricesForCurrentYear.first else {
+               return 0.0
+           }
+
+           // Calculer la performance YTD
+           print(lastPrice.value )
+           print(firstPriceOfYear.value)
+           let ytdPerformance = (lastPrice.value-firstPriceOfYear.value)/firstPriceOfYear.value
+           print(ytdPerformance)
+           return ytdPerformance
+       }
+    
     
 func getData(data: Data?, response: URLResponse?, error: Error?) {
     guard let data = data else { return }
@@ -49,7 +76,9 @@ func getData(data: Data?, response: URLResponse?, error: Error?) {
             let value = $0[1]
                 return Price(date: date, value: value, evol:0)
         }
+        let result=calculateYTDPerformance()
         DispatchQueue.main.async {
+            self.perfYtd=result
             self.initLastPrice()
         }
     } catch let jsonError as NSError {
