@@ -63,22 +63,25 @@ struct H2OFundsView: View {
             List(funds, id: \.self[0]) { fund in
             if let h2OPrice = viewModel.h2OPrices[fund[0]] {
                 HStack {
+                    VStack{
                     Text(fund[1]).bold().foregroundColor(Color(red: 0.5, green: 0.7, blue: 1.0))
-                        .frame(maxWidth: .infinity, alignment: .topLeading) // Aligner en haut à gauche
-                        //.border(Color.black, width: 2)
-                    
+                    }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading).border(Color.black, width: 0)
+                    Spacer()
+                    VStack {
+                        Text(dateFormatter.string(from:h2OPrice.lastprice.date))
+                        .font(.system(size: 12)) // Ajuster la taille de la police selon vos préférences
+                        .foregroundColor(Color.gray)
+                    }.frame(maxHeight: .infinity, alignment: .bottomLeading ).border(Color.black, width: 0)
                 VStack (alignment: .trailing, spacing: 3) {
-                        Text(String(format: "%.3f",h2OPrice.lastprice.value)).multilineTextAlignment(.trailing)
-                    
+                        Text(String(format: "%+.2f%%", h2OPrice.lastprice.evol*100)).foregroundColor(h2OPrice.lastprice.evol >= 0 ? Color.green : Color.red).multilineTextAlignment(.trailing)
+                        Text(String(format: "%.2f",h2OPrice.lastprice.value)).multilineTextAlignment(.trailing)
+                    Text(String(format: "%+.2f%%", h2OPrice.perfYtd*100)).foregroundColor(h2OPrice.perfYtd >= 0 ? Color.green : Color.red).multilineTextAlignment(.trailing)
+                        }
                         //Text(String(format: "%.3f", h2OPrice.getLastPrice().value))
                        
                        // Spacer()
                   
-                    Text(String(format: "%+.2f%%", h2OPrice.lastprice.evol*100)).foregroundColor(h2OPrice.lastprice.evol >= 0 ? Color.green : Color.red).multilineTextAlignment(.trailing)
-                    Text(dateFormatter.string(from:h2OPrice.lastprice.date))
-                        .font(.system(size: 12)) // Ajuster la taille de la police selon vos préférences
-                        .foregroundColor(Color.gray)
-                        }
+
                 }
                
                 }
