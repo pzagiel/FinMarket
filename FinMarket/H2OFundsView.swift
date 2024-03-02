@@ -49,23 +49,29 @@ class H2OFundsViewModel: ObservableObject {
 
 struct H2OFundsView: View {
     @StateObject var viewModel = H2OFundsViewModel()
-    let funds=[["FR0011015478","H20 Vivace EUR"],["FR0012497980","H20 Vivace USD"],["FR0011061803","H20 Multistrategies"],["FR0013393329","H20 Multibonds"],["FR0011008762","H2O Multiequities"]]
+    // Apparement State est nécessaire pour pouvoir réordonner les element de la liste !
+    @State var funds=[["FR0011015478","H20 Vivace EUR"],["FR0012497980","H20 Vivace USD"],["FR0011061803","H20 Multistrategies"],["FR0013393329","H20 Multibonds"],["FR0011008762","H2O Multiequities"]]
     //let funds = ["H2O Vivace", "H2O Multibonds","H2O Multiequities"]
     var body: some View {
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd-MM-yyyy"  // Choisissez le format de date souhaité
        
-        var fundsIsin: [String] {
+     /*   var fundsIsin: [String] {
                return funds.map { $0[0] }
-           }
+           } */
+        
         return
-    
-            List(funds, id: \.self[0]) { fund in
+        List {
+           // List(funds, id: \.self[0]) { fund in
+            ForEach(funds, id: \.self[0]) { fund in
+            //let fund = funds[index] plus utile
             if let h2OPrice = viewModel.h2OPrices[fund[0]] {
                 HStack {
                     VStack(alignment: .leading){
-                    Text(fund[1]).bold().foregroundColor(Color(red: 0.5, green: 0.7, blue: 1.0))
+                    // More like H20 Color
+                    Text(fund[1]).bold().foregroundColor(Color(red: 0.439, green: 0.647, blue: 0.839))
+                    //Text(fund[1]).bold().foregroundColor(Color(red: 0.5, green: 0.7, blue: 1.0))
                     Spacer()
                     Text(dateFormatter.string(from:h2OPrice.lastprice.date))
                             .font(.system(size: 12)) // Ajuster la taille de la police selon vos préférences
@@ -85,26 +91,38 @@ struct H2OFundsView: View {
                         //Text(String(format: "%.3f", h2OPrice.getLastPrice().value))
                        
                        // Spacer()
-                  
-
                 }
-               
+                
                 }
             }
+            // .onMove(perform: move)
+            .onMove { indices, newOffset in
+                     funds.move(fromOffsets: IndexSet(indices), toOffset: newOffset)
+                 }
+        }
             .navigationTitle("H2O Funds")
+            .navigationBarItems(trailing: EditButton())
+            /*.toolbar {
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                EditButton()
+                            }
+                        }*/
             
             .onAppear {
                 print("H2O Funds")
+                let fundsIsin = funds.map { $0[0] }
                 viewModel.getAllNAV(isins:fundsIsin)
                 viewModel.subscribeAll()
             }
-            .onReceive(viewModel.$h2OPrices) { updatedPrices in
+       /*     .onReceive(viewModel.$h2OPrices) { updatedPrices in
                print ("LAST NAV change")
                 let numberOfElements = viewModel.h2OPrices.count
                 print(numberOfElements)
-            }
+            }*/
     }
-    
+/*    mutating func move(from source: IndexSet, to destination: Int) {
+          funds.move(fromOffsets: source, toOffset: destination)
+      }*/
     
 }
 
