@@ -49,12 +49,13 @@ class H2OFundsViewModel: ObservableObject {
 
 struct H2OFundsView: View {
     @StateObject var viewModel = H2OFundsViewModel()
-    
+    let funds=[["FR0011015478","H20 Vivace EUR"],["FR0012497980","H20 Vivace USD"],["FR0011061803","H20 Multistrategies"],["FR0013393329","H20 Multibonds"],["FR0011008762","H2O Multiequities"]]
+    //let funds = ["H2O Vivace", "H2O Multibonds","H2O Multiequities"]
     var body: some View {
-        //let funds = ["H2O Vivace", "H2O Multibonds","H2O Multiequities"]
+        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd-MM-yyyy"  // Choisissez le format de date souhaité
-        let funds=[["FR0011015478","H20 Vivace EUR"],["FR0012497980","H20 Vivace USD"],["FR0011061803","H20 Multistrategies"],["FR0013393329","H20 Multibonds"]]
+       
         var fundsIsin: [String] {
                return funds.map { $0[0] }
            }
@@ -66,7 +67,6 @@ struct H2OFundsView: View {
                     VStack{
                     Text(fund[1]).bold().foregroundColor(Color(red: 0.5, green: 0.7, blue: 1.0))
                     }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading).border(Color.black, width: 0)
-                    Spacer()
                     VStack {
                         Text(dateFormatter.string(from:h2OPrice.lastprice.date))
                         .font(.system(size: 12)) // Ajuster la taille de la police selon vos préférences
@@ -75,7 +75,7 @@ struct H2OFundsView: View {
                 VStack (alignment: .trailing, spacing: 3) {
                         Text(String(format: "%+.2f%%", h2OPrice.lastprice.evol*100)).foregroundColor(h2OPrice.lastprice.evol >= 0 ? Color.green : Color.red).multilineTextAlignment(.trailing)
                         Text(String(format: "%.2f",h2OPrice.lastprice.value)).multilineTextAlignment(.trailing)
-                    Text(String(format: "%+.2f%%", h2OPrice.perfYtd*100)).foregroundColor(h2OPrice.perfYtd >= 0 ? Color.green : Color.red).multilineTextAlignment(.trailing)
+                    Text(String(format: "%+.2f%%", h2OPrice.perfYtd*100 )).foregroundColor(h2OPrice.perfYtd >= 0 ? Color.green : Color.red).multilineTextAlignment(.trailing)
                         }
                         //Text(String(format: "%.3f", h2OPrice.getLastPrice().value))
                        
@@ -89,9 +89,9 @@ struct H2OFundsView: View {
             .navigationTitle("H2O Funds")
             
             .onAppear {
-            print("H2O Funds")
-            viewModel.getAllNAV(isins:fundsIsin)
-            viewModel.subscribeAll()
+                print("H2O Funds")
+                viewModel.getAllNAV(isins:fundsIsin)
+                viewModel.subscribeAll()
             }
             .onReceive(viewModel.$h2OPrices) { updatedPrices in
                print ("LAST NAV change")
