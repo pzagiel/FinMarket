@@ -49,6 +49,7 @@ class H2OFundsViewModel: ObservableObject {
 
 struct H2OFundsView: View {
     @StateObject var viewModel = H2OFundsViewModel()
+    @State private var editMode = EditMode.inactive
     // Apparement State est nécessaire pour pouvoir réordonner les element de la liste !
     @State var funds=[["FR0011015478","H20 Vivace EUR"],["FR0012497980","H20 Vivace USD"],["FR0011061803","H20 Multistrategies"],["FR0013393329","H20 Multibonds"],["FR0011008762","H2O Multiequities"]]
     //let funds = ["H2O Vivace", "H2O Multibonds","H2O Multiequities"]
@@ -83,14 +84,17 @@ struct H2OFundsView: View {
                         .font(.system(size: 12)) // Ajuster la taille de la police selon vos préférences
                         .foregroundColor(Color.gray)
                     }.frame(maxHeight: .infinity, alignment: .bottomLeading ).border(Color.black, width: 2)*/
+                    if editMode == .inactive {
                 VStack (alignment: .trailing, spacing: 3) {
                         Text(String(format: "%+.2f%%", h2OPrice.lastprice.evol*100)).foregroundColor(h2OPrice.lastprice.evol >= 0 ? Color.green : Color.red).multilineTextAlignment(.trailing)
+                        
                         Text(String(format: "%.2f",h2OPrice.lastprice.value)).multilineTextAlignment(.trailing)
                     Text(String(format: "%+.2f%%", h2OPrice.perfYtd*100 )).foregroundColor(h2OPrice.perfYtd >= 0 ? Color.green : Color.red).multilineTextAlignment(.trailing)
                 }.border(Color.black, width: 0)
                         //Text(String(format: "%.3f", h2OPrice.getLastPrice().value))
                        
                        // Spacer()
+                    }
                 }
                 
                 }
@@ -102,6 +106,8 @@ struct H2OFundsView: View {
         }
             .navigationTitle("H2O Funds")
             .navigationBarItems(trailing: EditButton())
+            .environment(\.editMode, $editMode)
+            //.navigationBarItems(trailing: EditButton().environment(\.editMode, $editMode))
             /*.toolbar {
                             ToolbarItem(placement: .navigationBarLeading) {
                                 EditButton()
