@@ -34,10 +34,28 @@ class H2OPrice: ObservableObject{
             guard let lastPrice = prices.last else {
                 return 0.0 // Retourne 0 si la liste des prix est vide
             }
+           // let currentDate = Date()
+        let calendar = Calendar.current
+        var currentYear: Int=0
+        // For determining the current year take the year of last NAV in place of the current date
+        // wich doesn't work for the last day of the year
+        if let currentDate = prices.last?.date {
+            currentYear = calendar.component(.year, from: currentDate)
+        } else {
+            currentYear = 0
+        }
 
-            let currentDate = Date()
-            let calendar = Calendar.current
-            let currentYear = calendar.component(.year, from: currentDate)
+        if currentYear != 0  {
+            print("L'année courante est \(currentYear)")
+        } else {
+            print("Aucune année disponible")
+        }
+
+
+        
+          //  var currentDate=prices.last?.date
+          //  let calendar = Calendar.current
+          //  let currentYear = calendar.component(.year, from: currentDate)
 
             // Filtrer les prix pour l'année précédente
             let pricesForPreviousYear = prices.filter {
