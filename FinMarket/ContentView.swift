@@ -96,11 +96,11 @@ struct ContentView: View {
     //@State private var yahooPrices: [String: YahooPrice] = [:]
     
     let symbols = ["EURUSD=X","UBSG.SW", "INGA.AS", "PHIA.AS", "PANW","MU","CAP.PA", "ALGN","AMZN","BABA","JD","MDB","MRNA","SBUX","LOTB.BR","AIR.PA","STMPA.PA","DIM.PA","TSM","TSLA","AAPL"]
-    let symbols1 = ["UBSG.SW", "INGA.AS","BABA","MDB"]
+    // For Mutual funds (here H20) JSON Struct is different
+    let symbols1 = ["0P0001KVR5.F", "0P0001KVR8"]
     var body: some View {
     TabView {
         NavigationView {
-           
        /* Button("Refresh") {
                     // Action à exécuter lorsque l'utilisateur appuie sur le bouton
                     print("Le bouton a été cliqué !")
@@ -129,25 +129,19 @@ struct ContentView: View {
     }
         .onAppear {
                     print("Refresh is called")
-                    //getAllPrice2(symbols: symbols)
                     viewModel.getAllPrice(symbols: symbols)
                     viewModel.subscribeAll()
                     self.startRefreshTimer()
                    
                 }
-        
-        
-        
         .onReceive(viewModel.$yahooPrices) { updatedPrices in
            print ("Price change")
             let numberOfElements = viewModel.yahooPrices.count
             print(numberOfElements)
         }
-        
-        
-        .navigationTitle("Stocks") // Ajoutez le titre à la barre de navigation
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
+                
                 Menu {
                         Button("EDR") {
                         // Action à effectuer lorsque "EDR" est sélectionné dans le menu
@@ -162,22 +156,41 @@ struct ContentView: View {
                             }
             }
                 }
+        .navigationBarTitle("Stocks")// Ajoutez le titre à la barre de navigation
+        //.font(.custom("Arial", size:16))
         }
         .tabItem {
                         Label("Stocks", systemImage: "chart.bar.fill")
                     }
 
                     // Second Tab (You can add more tabs similarly)
-                    Text("H2O Funds NAV soon")
+                    //createH2OFundsView()
+        NavigationView {
+                        H2OFundsView()
+        }
                         .tabItem {
                             Label("H2O Funds", systemImage: "square.and.pencil")
                         }
+                       
         
         //.id(refreshId)
     }
     }
        
- 
+    func createH2OFundsView() -> some View {
+        let funds = ["H2O Vivace", "H2O Multibonds","H2O Multiequities"]
+        return
+        List(funds, id: \.self) { fund in
+        HStack {
+                    Text(fund).bold()
+                    Spacer()
+                    Text("NAV soon")
+        }
+        }
+        .onAppear {
+            print("H2O Funds")
+        }
+    }
     private func startRefreshTimer() {
          Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { timer in
              self.viewModel.getAllPrice(symbols: symbols)
@@ -188,6 +201,9 @@ struct ContentView: View {
 
 struct Previews_ContentView_Previews: PreviewProvider {
     static var previews: some View {
+        Group {
             ContentView().preferredColorScheme(.dark)
+            ContentView().preferredColorScheme(.dark)
+        }
     }
 }
