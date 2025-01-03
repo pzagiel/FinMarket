@@ -117,9 +117,9 @@ class H2OPrice: ObservableObject{
             let jsonData = try JSONSerialization.data(withJSONObject: jsonArray, options: .prettyPrinted)
             
             // Convertit les données JSON en chaîne de caractères
-            if let jsonString = String(data: jsonData, encoding: .utf8) {
-                print(jsonString)
-            }
+            //if let jsonString = String(data: jsonData, encoding: .utf8) {
+            //    print(jsonString)
+            //}
             return jsonData
             //}
         } catch {
