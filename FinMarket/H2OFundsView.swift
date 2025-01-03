@@ -34,7 +34,7 @@ class H2OFundsViewModel: ObservableObject {
                 let h2OPrice = H2OPrice()
                 //let yahooPrice = YahooPrice()
                 h2OPrices[symbol] = h2OPrice // Ajout de l'instance au dictionnaire
-                h2OPrice.loadNav(isin: symbol)
+                    h2OPrice.loadNav(isin: symbol)
             }
             else
             {
