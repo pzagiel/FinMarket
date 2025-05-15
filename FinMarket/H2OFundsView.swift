@@ -45,13 +45,11 @@ class H2OFundsViewModel: ObservableObject {
     }
 }
 
-
-
 struct H2OFundsView: View {
     @StateObject var viewModel = H2OFundsViewModel()
     @State private var editMode = EditMode.inactive
     // Apparement State est nécessaire pour pouvoir réordonner les element de la liste !
-    @State var funds=[["FR0011015478","H20 Vivace EUR"],["FR0012497980","H20 Vivace USD"],["FR0011061803","H20 Multistrategies"],["FR0013393329","H20 Multibonds"],["FR0011008762","H2O Multiequities"]]
+    @State var funds=[["FR0011015478","H20 Vivace EUR"],["FR0012497980","H20 Vivace USD"],["FR0011061803","H20 Multistrategies"],["FR0010923383","H20 Multistrategies R"],["FR0013393329","H20 Multibonds"],["FR0011008762","H2O Multiequities"]]
     //let funds = ["H2O Vivace", "H2O Multibonds","H2O Multiequities"]
     var body: some View {
         
